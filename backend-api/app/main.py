@@ -10,9 +10,9 @@ from starlette.staticfiles import StaticFiles
 app = FastAPI(title="LLM Story API")
 add_cors(app)
 
-# @app.on_event("startup")
-# def on_startup():
-#     Base.metadata.create_all(bind=engine)
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 # Routers (your routers already carry /v1 prefixes)
 app.include_router(auth_routes.router)

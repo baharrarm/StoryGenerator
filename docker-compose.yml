@@ -20,10 +20,14 @@ services:
       context: ./backend-generator
       dockerfile: Dockerfile
     environment:
-      STORY_STORAGE: s3
-      STORY_BUCKET: ${STORY_BUCKET}
-      AWS_REGION: ${AWS_REGION}
-      APP_ENV: prod
+      STORY_STORAGE: local          # was: s3
+      STORY_DIR: /data/stories      # mounted volume below
+      QUEUE_BACKEND: none           # was: sqs (SQS not needed locally)
+      # STORY_BUCKET: ${STORY_BUCKET}   # only needed for s3 storage
+      # AWS_REGION: ${AWS_REGION}       # only needed for SQS/S3
+      # APP_ENV: prod                   # removed; prod guard not needed locally
+    volumes:
+      - storydata:/data/stories
     ports:
       - "3000:3000"
 
@@ -32,23 +36,30 @@ services:
       context: .
       dockerfile: backend-api/Dockerfile
     environment:
-      EXTERNAL_CHARACTER_API_URL: ${EXTERNAL_CHARACTER_API_URL}
-      STORY_STORAGE: s3
-      STORY_BUCKET: ${STORY_BUCKET}
-      AWS_REGION: ${AWS_REGION}
-      COGNITO_USER_POOL_ID: ${COGNITO_USER_POOL_ID}
-      COGNITO_CLIENT_ID: ${COGNITO_CLIENT_ID}
-      COGNITO_CLIENT_SECRET: ${COGNITO_CLIENT_SECRET}
-      APP_ENV: prod
+      EXTERNAL_CHARACTER_API_URL: ${EXTERNAL_CHARACTER_API_URL:-https://randomuser.me/api/?nat=au,us,gb}
+      STORY_STORAGE: local          # was: s3
+      STORY_DIR: /data/stories      # mounted volume below (shared with generator)
+      AUTH_PROVIDER: local          # was: cognito (Cognito user pool)
+      QUEUE_BACKEND: none           # was: sqs (SQS not needed locally)
+      DB_SSLMODE: disable           # was: require (AWS RDS required SSL)
+      JWT_SECRET: ${JWT_SECRET:-changeme-dev-secret}
       GENERATOR_URL: http://backend-generator:3000
+      # STORY_BUCKET: ${STORY_BUCKET}         # only needed for s3 storage
+      # AWS_REGION: ${AWS_REGION}             # only needed for SQS/S3/Cognito
+      # COGNITO_USER_POOL_ID: ${COGNITO_USER_POOL_ID}
+      # COGNITO_CLIENT_ID: ${COGNITO_CLIENT_ID}
+      # COGNITO_CLIENT_SECRET: ${COGNITO_CLIENT_SECRET}
+      # APP_ENV: prod                         # removed; prod guard not needed locally
+    volumes:
+      - storydata:/data/stories
     depends_on:
       db:
         condition: service_healthy
-      # backend-generator:
-      #   condition: service_started
+      backend-generator:
+        condition: service_started
     ports:
       - "8000:8000"
-  
+
   frontend:
     build:
       context: ./frontend
@@ -61,3 +72,4 @@ services:
 
 volumes:
   pgdata:
+  storydata:

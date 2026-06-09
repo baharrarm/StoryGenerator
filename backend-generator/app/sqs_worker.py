@@ -177,6 +177,11 @@ def dlq_drain_loop():
 
 def start_worker_thread():
     """Start the appropriate loop in a background thread (for FastAPI apps)."""
+    if os.getenv("QUEUE_BACKEND", "none").lower() == "none":
+        # Local mode: SQS not available. API calls generator directly over HTTP.
+        # was: always started the SQS poll loop (required AWS credentials)
+        logging.info("QUEUE_BACKEND=none; SQS worker not started")
+        return
     global _thread
     if _thread and _thread.is_alive():
         return

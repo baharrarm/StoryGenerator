@@ -1,10 +1,11 @@
 import os
 
 STORY_DIR = os.getenv("STORY_DIR", os.path.abspath("./data/stories"))
-# os.makedirs(STORY_DIR, exist_ok=True)
+os.makedirs(STORY_DIR, exist_ok=True)
 
 def save_story(filename: str, content: str):
     path = os.path.join(STORY_DIR, filename)
+    os.makedirs(os.path.dirname(path), exist_ok=True)  # keys include user_id subdir
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)
 
