@@ -1,0 +1,15 @@
+.env*
+*.pem
+__pycache__/
+*.pyc
+node_modules/
+dist/
+build/
+.vscode/
+.DS_Store
+.aws/
+.data/
+data/stories/
+*.sqlite*
+HFModelDownload/
+CLEANUP_PLAN.md
