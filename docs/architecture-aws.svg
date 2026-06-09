@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 612" width="900" height="612" font-family="'Segoe UI',Arial,sans-serif">
+
+  <!-- Background -->
+  <rect width="900" height="612" fill="white" rx="4"/>
+
+  <!-- Arrowhead markers -->
+  <defs>
+    <marker id="ah" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L8,3.5 z" fill="#555"/>
+    </marker>
+    <marker id="ah-r" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L8,3.5 z" fill="#c62828"/>
+    </marker>
+    <marker id="ah-g" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L8,3.5 z" fill="#888"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">StoryGenerator — AWS Production Architecture</text>
+
+  <!-- ══════════════ MIDDLE COLUMN ══════════════ -->
+
+  <!-- Users -->
+  <rect x="360" y="32" width="180" height="40" rx="8" fill="#4E342E"/>
+  <text x="450" y="49" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Users / Browser</text>
+  <text x="450" y="63" text-anchor="middle" font-size="10" fill="#efebe9">HTTPS · public internet</text>
+
+  <!-- Route 53 -->
+  <rect x="360" y="108" width="180" height="40" rx="8" fill="#00838F"/>
+  <text x="450" y="125" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon Route 53</text>
+  <text x="450" y="139" text-anchor="middle" font-size="10" fill="#e0f7fa">DNS routing</text>
+
+  <!-- ALB -->
+  <rect x="360" y="184" width="180" height="40" rx="8" fill="#00838F"/>
+  <text x="450" y="201" text-anchor="middle" font-size="12" font-weight="bold" fill="white">App Load Balancer</text>
+  <text x="450" y="215" text-anchor="middle" font-size="10" fill="#e0f7fa">TLS termination · HTTPS</text>
+
+  <!-- API EC2 -->
+  <rect x="350" y="262" width="200" height="58" rx="8" fill="#1565C0"/>
+  <text x="450" y="279" text-anchor="middle" font-size="12" font-weight="bold" fill="white">EC2: backend-api</text>
+  <text x="450" y="294" text-anchor="middle" font-size="10" fill="#e3f2fd">FastAPI · port 8000</text>
+  <text x="450" y="309" text-anchor="middle" font-size="10" fill="#e3f2fd">Auth · Stories · Admin · Users</text>
+
+  <!-- SQS -->
+  <rect x="360" y="360" width="180" height="40" rx="8" fill="#E65100"/>
+  <text x="450" y="377" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon SQS</text>
+  <text x="450" y="391" text-anchor="middle" font-size="10" fill="#fff3e0">generation job queue</text>
+
+  <!-- Generator ASG -->
+  <rect x="340" y="446" width="220" height="58" rx="8" fill="#1565C0"/>
+  <text x="450" y="463" text-anchor="middle" font-size="12" font-weight="bold" fill="white">EC2 Auto-Scaling Group</text>
+  <text x="450" y="478" text-anchor="middle" font-size="10" fill="#e3f2fd">backend-generator · port 3000</text>
+  <text x="450" y="493" text-anchor="middle" font-size="10" fill="#e3f2fd">DistilGPT-2 model · SQS worker</text>
+
+  <!-- S3 Stories -->
+  <rect x="360" y="552" width="180" height="40" rx="8" fill="#2E7D32"/>
+  <text x="450" y="569" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon S3</text>
+  <text x="450" y="583" text-anchor="middle" font-size="10" fill="#e8f5e9">story text · pre-signed URLs</text>
+
+  <!-- ══════════════ RIGHT COLUMN ══════════════ -->
+
+  <!-- Cognito -->
+  <rect x="682" y="262" width="198" height="58" rx="8" fill="#6A1B9A"/>
+  <text x="781" y="279" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon Cognito</text>
+  <text x="781" y="294" text-anchor="middle" font-size="10" fill="#f3e5f5">User Pools · RS256 JWT · JWKS</text>
+  <text x="781" y="309" text-anchor="middle" font-size="10" fill="#f3e5f5">admin / registered / anonymous</text>
+
+  <!-- RDS -->
+  <rect x="682" y="360" width="198" height="58" rx="8" fill="#2E7D32"/>
+  <text x="781" y="377" text-anchor="middle" font-size="12" font-weight="bold" fill="white">RDS PostgreSQL</text>
+  <text x="781" y="392" text-anchor="middle" font-size="10" fill="#e8f5e9">users · stories · feedback · prefs</text>
+  <text x="781" y="407" text-anchor="middle" font-size="10" fill="#e8f5e9">Alembic migrations · SSL</text>
+
+  <!-- CloudWatch -->
+  <rect x="682" y="446" width="198" height="58" rx="8" fill="#B71C1C"/>
+  <text x="781" y="463" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon CloudWatch</text>
+  <text x="781" y="478" text-anchor="middle" font-size="10" fill="#ffebee">custom metric: SQS queue depth</text>
+  <text x="781" y="493" text-anchor="middle" font-size="10" fill="#ffebee">triggers ASG scale-out / scale-in</text>
+
+  <!-- ══════════════ LEFT COLUMN ══════════════ -->
+
+  <!-- Frontend EC2 -->
+  <rect x="20" y="184" width="180" height="40" rx="8" fill="#1565C0"/>
+  <text x="110" y="201" text-anchor="middle" font-size="12" font-weight="bold" fill="white">EC2: frontend</text>
+  <text x="110" y="215" text-anchor="middle" font-size="10" fill="#e3f2fd">React · nginx · port 80</text>
+
+  <!-- ECR -->
+  <rect x="20" y="262" width="180" height="58" rx="8" fill="#546E7A"/>
+  <text x="110" y="279" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon ECR</text>
+  <text x="110" y="294" text-anchor="middle" font-size="10" fill="#eceff1">container registry</text>
+  <text x="110" y="309" text-anchor="middle" font-size="10" fill="#eceff1">api + generator images</text>
+
+  <!-- DLQ -->
+  <rect x="20" y="360" width="180" height="40" rx="8" fill="#BF360C"/>
+  <text x="110" y="377" text-anchor="middle" font-size="12" font-weight="bold" fill="white">SQS Dead-Letter Queue</text>
+  <text x="110" y="391" text-anchor="middle" font-size="10" fill="#fff3e0">failed after 3 retries</text>
+
+  <!-- DLQ Worker -->
+  <rect x="20" y="446" width="180" height="58" rx="8" fill="#1565C0"/>
+  <text x="110" y="463" text-anchor="middle" font-size="12" font-weight="bold" fill="white">EC2: DLQ Worker</text>
+  <text x="110" y="478" text-anchor="middle" font-size="10" fill="#e3f2fd">WORKER_MODE=dlq</text>
+  <text x="110" y="493" text-anchor="middle" font-size="10" fill="#e3f2fd">archives failed jobs to S3</text>
+
+  <!-- S3 DLQ Archive -->
+  <rect x="20" y="552" width="180" height="40" rx="8" fill="#2E7D32"/>
+  <text x="110" y="569" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Amazon S3</text>
+  <text x="110" y="583" text-anchor="middle" font-size="10" fill="#e8f5e9">DLQ archive · dlq/{ts}-{id}.json</text>
+
+  <!-- ══════════════ ARROWS ══════════════ -->
+
+  <!-- Users → Route 53 -->
+  <line x1="450" y1="72" x2="450" y2="106" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- Route 53 → ALB -->
+  <line x1="450" y1="148" x2="450" y2="182" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- ALB → Frontend (path /) -->
+  <line x1="358" y1="204" x2="202" y2="204" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="280" y="198" text-anchor="middle" font-size="10" fill="#444">/</text>
+
+  <!-- ECR → Frontend (image pull) -->
+  <line x1="110" y1="260" x2="110" y2="226" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ah-g)"/>
+
+  <!-- ALB → API (path /v1/*) -->
+  <line x1="450" y1="224" x2="450" y2="260" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="457" y="247" font-size="10" fill="#444">/v1/*</text>
+
+  <!-- API → SQS -->
+  <line x1="450" y1="320" x2="450" y2="358" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="457" y="344" font-size="10" fill="#444">enqueue job</text>
+
+  <!-- SQS → Generator ASG -->
+  <line x1="450" y1="400" x2="450" y2="444" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="457" y="428" font-size="10" fill="#444">long poll</text>
+
+  <!-- Generator ASG → S3 Stories -->
+  <line x1="450" y1="504" x2="450" y2="550" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="457" y="532" font-size="10" fill="#444">write story</text>
+
+  <!-- API → Cognito (horizontal right) -->
+  <line x1="550" y1="284" x2="680" y2="284" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="615" y="278" text-anchor="middle" font-size="10" fill="#444">verify token</text>
+
+  <!-- API → RDS (diagonal, from API bottom-right to RDS left) -->
+  <line x1="550" y1="312" x2="680" y2="374" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="638" y="336" font-size="10" fill="#444">read/write</text>
+
+  <!-- ECR → API (dashed, horizontal) -->
+  <line x1="200" y1="284" x2="348" y2="284" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ah-g)"/>
+  <text x="274" y="278" text-anchor="middle" font-size="10" fill="#666">image pull</text>
+
+  <!-- ECR → Generator ASG (dashed diagonal, from ECR bottom to ASG top-left) -->
+  <line x1="110" y1="320" x2="338" y2="446" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ah-g)"/>
+
+  <!-- SQS → DLQ (dashed, horizontal left, red — failed messages) -->
+  <line x1="358" y1="380" x2="202" y2="380" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#ah-r)"/>
+  <text x="280" y="373" text-anchor="middle" font-size="10" fill="#c62828">max retries →</text>
+
+  <!-- DLQ → DLQ Worker (vertical) -->
+  <line x1="110" y1="400" x2="110" y2="444" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- DLQ Worker → S3 Archive (vertical) -->
+  <line x1="110" y1="504" x2="110" y2="550" stroke="#555" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- SQS → CloudWatch (dashed red — publishes queue depth metric) -->
+  <line x1="540" y1="392" x2="680" y2="456" stroke="#c62828" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ah-r)"/>
+  <text x="624" y="420" text-anchor="middle" font-size="10" fill="#c62828">queue depth</text>
+
+  <!-- CloudWatch → Generator ASG (dashed red — scale signal) -->
+  <line x1="680" y1="472" x2="562" y2="472" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ah-r)"/>
+  <text x="621" y="466" text-anchor="middle" font-size="10" fill="#c62828">scale signal</text>
+
+</svg>
