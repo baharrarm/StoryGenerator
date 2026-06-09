@@ -1,12 +1,12 @@
 import API from "./axios";
 
-// Auth
+// Auth — original local endpoints (pre-Cognito, kept for portfolio)
 // export const login = (data) => API.post("/auth/login", data);
 // export const register = (data) => API.post("/auth/register", data);
 
-// Auth (Cognito)
+// Auth — works in both local and Cognito mode (AUTH_PROVIDER env var on backend)
 export const signup = (data) => API.post("/auth/signup", data);
-export const register = signup; // backward-compatible (old code)
+export const register = signup; // backward-compatible alias
 export const confirmSignup = (params) =>
   API.post("/auth/confirm", null, { params }); // { username, code }
 export const login = ({ username, password, email }) =>
@@ -28,8 +28,9 @@ export const putMyPrefs = (data) => API.put("/users/me/preferences", data);
 export const deleteMe = () => API.delete("/users/me");
 
 // Stories
-export const generateStory = (data, params) => 
-    API.post("/stories/generate", data, { params });export const deleteStory = (id) => API.delete(`/stories/${id}`);
+export const generateStory = (data, params) =>
+  API.post("/stories/generate", data, { params });
+export const deleteStory = (id) => API.delete(`/stories/${id}`);
 export const postStoryFeedback = (storyId, data) => API.post(`/stories/${storyId}/feedback`, data); // { rating, comment }
 export const getMyStories = (params) => API.get("/users/my-stories", { params });
 export const getStory = (id) => API.get(`/stories/${id}`);
