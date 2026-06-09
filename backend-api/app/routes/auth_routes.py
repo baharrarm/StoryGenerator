@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 import os
 from app.db import get_db
+from app.utils.deps import get_current_user
 from app.schemas.auth import LoginIn, UserCreate, Token
 from app.security import cognito
-from app.controllers.auth_controller import upsert_local_user, register_user, login_user
+from app.controllers.auth_controller import upsert_local_user, register_user, login_user, change_local_password
 from pydantic import BaseModel, EmailStr, Field
 from botocore.exceptions import ClientError
 
@@ -61,12 +62,18 @@ def email_confirm(access_token: str, code: str):
     return {"message": "Email verified."}
 
 class PasswordChangeIn(BaseModel):
-    access_token: str
+    access_token: str | None = None  # only used in Cognito mode
     old_password: str = Field(min_length=8)
     new_password: str = Field(min_length=8)
 
 @router.post("/password/change")
-def password_change(body: PasswordChangeIn):
-    # Cognito-only; not used in local mode
+def password_change(
+    body: PasswordChangeIn,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user),
+):
+    if AUTH_PROVIDER == "local":
+        return change_local_password(db, current_user.id, body.old_password, body.new_password)
+    # Cognito: uses the Cognito access token from the request body
     cognito.change_password(body.access_token, body.old_password, body.new_password)
     return {"message": "Password changed."}

@@ -4,6 +4,7 @@ from app.middleware.cors import add_cors
 from app.db import engine
 from app.models.base import Base
 from app.routes import auth_routes, story_routes, admin_routes, user_routes
+from sqlalchemy import text
 from starlette.staticfiles import StaticFiles
 
 
@@ -13,6 +14,8 @@ add_cors(app)
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE stories ADD COLUMN IF NOT EXISTS style VARCHAR"))
 
 # Routers (your routers already carry /v1 prefixes)
 app.include_router(auth_routes.router)

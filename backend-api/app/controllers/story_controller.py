@@ -13,7 +13,8 @@ from app.db import SessionLocal
 import boto3
 import uuid
 
-GENERATOR_URL = os.getenv("GENERATOR_URL", "http://localhost:8001")
+QUEUE_BACKEND  = os.getenv("QUEUE_BACKEND", "none")   # was: sqs (required AWS)
+GENERATOR_URL  = os.getenv("GENERATOR_URL", "http://localhost:8001")
 _SQS_URL = os.getenv("SQS_QUEUE_URL")
 _sqs = boto3.client("sqs", region_name=os.getenv("AWS_REGION", "ap-southeast-2"))
 
@@ -51,6 +52,51 @@ def generate_and_optionally_save(
 
     temperature, top_p = _decode_params_from_avg(avg)
 
+    if QUEUE_BACKEND == "none":
+        # Local mode: call generator synchronously over HTTP
+        # was: send to SQS queue (async, required AWS credentials)
+        payload = {
+            "prompt": prompt,
+            "genre": genre,
+            "style": style,
+            "length": length,
+            "temperature": temperature,
+            "top_p": top_p,
+            "user_id": current_user.id if current_user else None,
+            "use_random_character": False,  # random character already applied above
+        }
+        try:
+            resp = httpx.post(f"{GENERATOR_URL}/v1/generate", json=payload, timeout=120.0)
+            resp.raise_for_status()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Generator error: {e}")
+
+        data = resp.json()
+        storage_key = data.get("storage_key")
+
+        db_id = None
+        if current_user and storage_key:
+            with SessionLocal() as s:
+                meta = StoryMetadata(
+                    title=(prompt[:60] or "Story").strip(),
+                    genre=genre or "",
+                    style=style or "",
+                    owner_id=current_user.id,
+                    file_path=storage_key,
+                )
+                s.add(meta)
+                s.commit()
+                s.refresh(meta)
+                db_id = meta.id
+
+        return {
+            "status": "completed",
+            "saved": db_id is not None,
+            "story": data["story"],
+            "story_id": db_id,
+        }
+
+    # SQS path (was original behavior, required AWS SQS queue)
     if not _SQS_URL:
         raise HTTPException(status_code=500, detail="SQS queue not configured")
 
@@ -71,7 +117,7 @@ def generate_and_optionally_save(
         QueueUrl=_SQS_URL,
         MessageBody=json.dumps(body),
     )
-    
+
     return {
         "status": "queued",
         "saved": current_user is not None,

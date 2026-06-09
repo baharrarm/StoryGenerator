@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Title, Card, Group, Button, Table, Select, NumberInput, TextInput, Loader, Text } from "@mantine/core";
+import { Title, Card, Group, Button, Table, Select, NumberInput, Loader, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { getMyStories, deleteStory } from "../api/endpoints";
 import { AuthContext } from "../AuthContext";
@@ -60,8 +60,22 @@ export default function MyStories() {
 
       <Card withBorder shadow="sm" p="lg" mt="md">
         <Group grow>
-          <TextInput label="Genre" placeholder="e.g., romance" value={genre} onChange={(e) => setGenre(e.target.value)} />
-          <TextInput label="Style" placeholder="e.g., casual" value={style} onChange={(e) => setStyle(e.target.value)} />
+          <Select
+            label="Genre"
+            placeholder="All genres"
+            data={["romance", "adventure", "mystery", "fantasy", "sci-fi"].map((v) => ({ value: v, label: v }))}
+            value={genre || null}
+            onChange={(v) => setGenre(v || "")}
+            clearable
+          />
+          <Select
+            label="Style"
+            placeholder="All styles"
+            data={["formal", "casual", "humorous", "dramatic"].map((v) => ({ value: v, label: v }))}
+            value={style || null}
+            onChange={(v) => setStyle(v || "")}
+            clearable
+          />
           <Select label="Sort by" value={sortBy} onChange={setSortBy} data={[{ value: "created_at", label: "Created" }, { value: "title", label: "Title" }]} />
           <Select label="Order" value={order} onChange={setOrder} data={[{ value: "asc", label: "Asc" }, { value: "desc", label: "Desc" }]} />
           <NumberInput label="Page size" min={1} max={50} value={limit} onChange={(v) => setLimit(Number(v) || 10)} />

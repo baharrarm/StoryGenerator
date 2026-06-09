@@ -9,6 +9,7 @@ class StoryMetadata(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     genre = Column(String, nullable=True)
+    style = Column(String, nullable=True)
     job_id = Column(String, unique=True, index=True, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

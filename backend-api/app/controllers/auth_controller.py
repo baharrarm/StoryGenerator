@@ -20,6 +20,14 @@ def login_user(db: Session, username: str, password: str):
     token = create_access_token({"sub": str(user.id), "role": user.role})
     return token, user
 
+def change_local_password(db: Session, user_id: int, old_password: str, new_password: str):
+    user = db.query(User).filter_by(id=user_id).first()
+    if not user or not verify_password(old_password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    user.hashed_password = hash_password(new_password)
+    db.commit()
+    return {"message": "Password changed."}
+
 def upsert_local_user(db: Session, username: str, email: str | None):
     u = db.query(User).filter(User.username == username).first()
     if not u:

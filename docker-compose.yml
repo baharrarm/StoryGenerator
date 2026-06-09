@@ -20,6 +20,7 @@ services:
       context: ./backend-generator
       dockerfile: Dockerfile
     environment:
+      DATABASE_URL: postgresql+psycopg2://app:app@db:5432/appdb  # was: RDS hostname
       STORY_STORAGE: local          # was: s3
       STORY_DIR: /data/stories      # mounted volume below
       QUEUE_BACKEND: none           # was: sqs (SQS not needed locally)
@@ -36,6 +37,7 @@ services:
       context: .
       dockerfile: backend-api/Dockerfile
     environment:
+      DATABASE_URL: postgresql+psycopg2://app:app@db:5432/appdb  # was: RDS hostname
       EXTERNAL_CHARACTER_API_URL: ${EXTERNAL_CHARACTER_API_URL:-https://randomuser.me/api/?nat=au,us,gb}
       STORY_STORAGE: local          # was: s3
       STORY_DIR: /data/stories      # mounted volume below (shared with generator)

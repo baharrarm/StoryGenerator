@@ -72,14 +72,16 @@ export default function Profile() {
               <Button
                 variant="light"
                 onClick={async () => {
-                  const at = localStorage.getItem("cog_at");
-                  if (!at) return notifications.show({ color: "red", message: "Please re-login first." });
-                  try {
-                    await changeEmail({ access_token: at, new_email: emailNew });
-                    notifications.show({ color: "green", message: "Code sent to new email." });
-                  } catch {
-                    notifications.show({ color: "red", message: "Could not start email change." });
-                  }
+                  // Email change is Cognito-only; not available in local mode
+                  // const at = localStorage.getItem("cog_at");
+                  // if (!at) return notifications.show({ color: "red", message: "Please re-login first." });
+                  // try {
+                  //   await changeEmail({ access_token: at, new_email: emailNew });
+                  //   notifications.show({ color: "green", message: "Code sent to new email." });
+                  // } catch {
+                  //   notifications.show({ color: "red", message: "Could not start email change." });
+                  // }
+                  notifications.show({ color: "blue", message: "Email change is only available in Cognito mode." });
                 }}
               >
                 Send code
@@ -91,14 +93,16 @@ export default function Profile() {
               />
               <Button
                 onClick={async () => {
-                  const at = localStorage.getItem("cog_at");
-                  if (!at) return notifications.show({ color: "red", message: "Please re-login first." });
-                  try {
-                    await confirmEmail({ access_token: at, code: emailCode });
-                    notifications.show({ color: "green", message: "Email verified. Re-login to refresh." });
-                  } catch {
-                    notifications.show({ color: "red", message: "Verification failed." });
-                  }
+                  // Email confirmation is Cognito-only; not available in local mode
+                  // const at = localStorage.getItem("cog_at");
+                  // if (!at) return notifications.show({ color: "red", message: "Please re-login first." });
+                  // try {
+                  //   await confirmEmail({ access_token: at, code: emailCode });
+                  //   notifications.show({ color: "green", message: "Email verified. Re-login to refresh." });
+                  // } catch {
+                  //   notifications.show({ color: "red", message: "Verification failed." });
+                  // }
+                  notifications.show({ color: "blue", message: "Email change is only available in Cognito mode." });
                 }}
               >
                 Confirm email
@@ -110,11 +114,13 @@ export default function Profile() {
             <Button
               variant="light"
               onClick={async () => {
-                const at = localStorage.getItem("cog_at");
-                if (!at) return notifications.show({ color: "red", message: "Please re-login first." });
+                // const at = localStorage.getItem("cog_at");          // Cognito access token
+                // if (!at) return notifications.show({ color: "red", message: "Please re-login first." });
+                // local mode: bearer token sent via Authorization header; no cog_at needed
                 if (!newPw || newPw !== newPw2) return notifications.show({ color: "red", message: "Passwords don’t match." });
                 try {
-                  await changePassword({ access_token: at, old_password: oldPw, new_password: newPw });
+                  // await changePassword({ access_token: at, old_password: oldPw, new_password: newPw });
+                  await changePassword({ old_password: oldPw, new_password: newPw });
                   setOldPw(""); setNewPw(""); setNewPw2("");
                   notifications.show({ color: "green", message: "Password changed." });
                 } catch {

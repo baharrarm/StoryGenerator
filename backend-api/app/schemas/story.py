@@ -14,7 +14,7 @@ class StoryResponse(BaseModel):
     saved: bool = False
     story_id: Optional[int] = None
     storage_key: Optional[str] = None
-    status: Optional[Literal["queued","ok"]] = None
+    status: Optional[Literal["queued", "ok", "completed"]] = None  # "completed" added for local HTTP path
     job_id: Optional[str] = None
 
 class StoryMetaOut(BaseModel):
